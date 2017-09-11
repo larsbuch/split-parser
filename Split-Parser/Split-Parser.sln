@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recognizer", "Recognizer\Recognizer.csproj", "{2C7553BE-F82C-4869-B560-5DE0C4A47E1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csproj", "{ECFF316F-0902-4C7C-9C0B-E292DC00A947}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecursiveGrammarGraph", "RecursiveGrammarGraph\RecursiveGrammarGraph.csproj", "{61D172E5-C743-4640-A2F0-26B1580CD860}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C7553BE-F82C-4869-B560-5DE0C4A47E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C7553BE-F82C-4869-B560-5DE0C4A47E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C7553BE-F82C-4869-B560-5DE0C4A47E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C7553BE-F82C-4869-B560-5DE0C4A47E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECFF316F-0902-4C7C-9C0B-E292DC00A947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECFF316F-0902-4C7C-9C0B-E292DC00A947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECFF316F-0902-4C7C-9C0B-E292DC00A947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECFF316F-0902-4C7C-9C0B-E292DC00A947}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61D172E5-C743-4640-A2F0-26B1580CD860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61D172E5-C743-4640-A2F0-26B1580CD860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61D172E5-C743-4640-A2F0-26B1580CD860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61D172E5-C743-4640-A2F0-26B1580CD860}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
