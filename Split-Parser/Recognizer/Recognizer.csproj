@@ -43,5 +43,11 @@
     <Compile Include="Recognizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RecursiveGrammarGraph\RecursiveGrammarGraph.csproj">
+      <Project>{61d172e5-c743-4640-a2f0-26b1580cd860}</Project>
+      <Name>RecursiveGrammarGraph</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
