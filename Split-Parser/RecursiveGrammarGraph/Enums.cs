@@ -18,4 +18,13 @@ namespace RecursiveGrammarGraph
         NonTerminalNonRecursive,
         NonTerminalRecursive
     }
+
+    internal enum PartType
+    {
+        PatternStart,
+        NonTerminal,
+        PatternEnd,
+        Terminal
+    }
+
 }
