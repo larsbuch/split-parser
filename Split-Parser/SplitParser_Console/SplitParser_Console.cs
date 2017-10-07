@@ -18,6 +18,12 @@ namespace SplitParser_Console
 
             /* Code */
             RGG grammar = new RGG("A calculus", 1);
+            grammar.BuildPattern("Start").NonTerminal("E").PatternEnd();
+            grammar.BuildPattern("E").NonTerminal("E").NonTerminal("Q").NonTerminal("F").Or.NonTerminal("F").PatternEnd();
+            grammar.BuildPattern("Q").Terminal("+").Or.Terminal("-").PatternEnd();
+            grammar.BuildPattern("F").Terminal("a").PatternEnd();
+            grammar.BuildGraph();
+            grammar.PrintRGG("Step 1", "Start");
             /* End Code */
 
             Console.WriteLine("End: {0}", stopwatch.ElapsedMilliseconds);

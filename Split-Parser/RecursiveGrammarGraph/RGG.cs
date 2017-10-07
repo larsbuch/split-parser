@@ -20,25 +20,6 @@ namespace RecursiveGrammarGraph
             _patternStartRGGNodes = new Dictionary<string, RGGNode>();
             _grammarName = grammarName;
             _buildPatternStart = new Dictionary<string, Pattern>();
-            //BuildStepOne();
-            //BuildStepOne_V2();
-            BuildStepOne_V3();
-            if (stopBuildAtStep > 1)
-            {
-                BuildStepTwo();
-                if (stopBuildAtStep > 2)
-                {
-                    BuildStepThree();
-                    if (stopBuildAtStep > 3)
-                    {
-                        BuildStepFour();
-                        if (stopBuildAtStep > 4)
-                        {
-                            BuildStepFive();
-                        }
-                    }
-                }
-            }
         }
 
         private Dictionary<string, Pattern> BuildPatternStart
@@ -67,54 +48,6 @@ namespace RecursiveGrammarGraph
             {
                 pattern.Build();
             }
-        }
-
-        /* Wireup patterns*/
-        private void BuildStepOne()
-        {
-            CreateRGGTransition("Start", "Start 1", TransitionType.PatternStart);
-            CreateRGGTransition("Start 1", "Start 2", TransitionType.NonTerminalNonRecursive, "E");
-            CreateRGGTransition("Start 2", "Start End", TransitionType.PatternEnd);
-            CreateRGGTransition("E", "E 1", TransitionType.PatternStart);
-            CreateRGGTransition("E 1", "E 2", TransitionType.NonTerminalRecursive, "E");
-            CreateRGGTransition("E 2", "E 3", TransitionType.NonTerminalNonRecursive, "Q");
-            CreateRGGTransition("E 3", "E 4", TransitionType.NonTerminalNonRecursive, "F");
-            CreateRGGTransition("E 4", "E End", TransitionType.PatternEnd);
-            CreateRGGTransition("E", "E 5", TransitionType.PatternStart);
-            CreateRGGTransition("E 5", "E 6", TransitionType.NonTerminalNonRecursive, "F");
-            CreateRGGTransition("E 6", "E End", TransitionType.PatternEnd);
-            CreateRGGTransition("Q", "Q 1", TransitionType.PatternStart);
-            CreateRGGTransition("Q 1", "Q 2", TransitionType.Terminal, '+');
-            CreateRGGTransition("Q 2", "Q End", TransitionType.PatternEnd);
-            CreateRGGTransition("Q", "Q 3", TransitionType.PatternStart);
-            CreateRGGTransition("Q 3", "Q 4", TransitionType.Terminal, '-');
-            CreateRGGTransition("Q 4", "Q End", TransitionType.PatternEnd);
-            CreateRGGTransition("F", "F 1", TransitionType.PatternStart);
-            CreateRGGTransition("F 1", "F 2", TransitionType.Terminal, 'a');
-            CreateRGGTransition("F 2", "F End", TransitionType.PatternEnd);
-            PrintRGG("Step 1", "Start");
-        }
-
-        private void BuildStepOne_V2()
-        {
-            BuildPattern("Start").NonTerminal( "E").PatternEnd();
-            BuildPattern("E").NonTerminal( "E").NonTerminal( "Q").NonTerminal( "F").PatternEnd();
-            BuildPattern("E").NonTerminal( "F").PatternEnd();
-            BuildPattern("Q").Terminal( "+").PatternEnd();
-            BuildPattern("Q").Terminal( "-").PatternEnd();
-            BuildPattern("F").Terminal( "a").PatternEnd();
-            BuildGraph();
-            PrintRGG("Step 1 V2","Start");
-        }
-
-        private void BuildStepOne_V3()
-        {
-            BuildPattern("Start").NonTerminal( "E").PatternEnd();
-            BuildPattern("E").NonTerminal( "E").NonTerminal( "Q").NonTerminal( "F").Or.NonTerminal( "F").PatternEnd();
-            BuildPattern("Q").Terminal( "+").Or.Terminal( "-").PatternEnd();
-            BuildPattern("F").Terminal( "a").PatternEnd();
-            BuildGraph();
-            PrintRGG("Step 1 V3", "Start");
         }
 
         private void BuildStepTwo()
