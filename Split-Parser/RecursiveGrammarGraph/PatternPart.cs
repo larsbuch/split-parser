@@ -8,13 +8,15 @@ namespace RecursiveGrammarGraph
 {
     public class PatternPart
     {
-        private Pattern _pattern;
+        private PatternBuilder _pattern;
         private PartType _partType;
         private RGG _rGG;
         private PatternPart _nextPatternPart;
+        private PatternPart _parentPatternPart;
+        private PatternPart _parentEndPatternPart;
         private string _toNodeName;
 
-        internal PatternPart(RGG rGG, Pattern pattern, PartType partType)
+        internal PatternPart(RGG rGG, PatternBuilder pattern, PartType partType)
         {
             _rGG = rGG;
             _pattern = pattern;
@@ -37,7 +39,7 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        internal string NonTerminalName { get; set; }
+        internal string Name { get; set; }
 
         internal string TerminalPattern { get; set; }
 
@@ -45,7 +47,7 @@ namespace RecursiveGrammarGraph
         {
             PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.NonTerminal);
             _nextPatternPart = patternPart;
-            patternPart.NonTerminalName = nonterminalName;
+            patternPart.Name = nonterminalName;
             return patternPart;
         }
 
@@ -63,17 +65,25 @@ namespace RecursiveGrammarGraph
                     _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.PatternStart);
                     _nextPatternPart.Build(ToNodeName);
                     break;
+                case PartType.GroupStart:
+                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart);
+                    _nextPatternPart.Build(ToNodeName);
+                    break;
+                case PartType.GroupEnd:
+                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupEnd);
+                    _nextPatternPart.Build(ToNodeName);
+                    break;
                 case PartType.Terminal:
                     _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.Terminal, TerminalPattern[0]);
                     _nextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.NonTerminal:
                     TransitionType transitionType = TransitionType.NonTerminalNonRecursive;
-                    if (NonTerminalName == _pattern.Name)
+                    if (Name == _pattern.Name)
                     {
                         transitionType = TransitionType.NonTerminalRecursive;
                     }
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, transitionType, NonTerminalName);
+                    _rGG.CreateRGGTransition(fromNode, ToNodeName, transitionType, Name);
                     _nextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.PatternEnd:
@@ -94,9 +104,46 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                PatternEnd();
-                return _pattern.StartPattern();
+                if (_parentPatternPart == null)
+                {
+                    PatternEnd();
+                    return _pattern.StartPattern();
+                }
+                else
+                {
+                    _nextPatternPart = _parentEndPatternPart;
+                    return _parentPatternPart;
+                }
             }
         }
+
+        public PatternPart GroupStart
+        {
+            get
+            {
+                PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.GroupStart);
+                PatternPart endPatternPart = new PatternPart(_rGG, _pattern, PartType.GroupEnd);
+                _nextPatternPart = patternPart;
+                _parentPatternPart = patternPart;
+                _parentEndPatternPart = endPatternPart;
+                return patternPart;
+            }
+        }
+
+        public PatternPart NamedGroupStart(string groupName)
+        {
+            PatternPart patternPart = GroupStart;
+            patternPart.Name = groupName;
+            return patternPart;
+        }
+
+        public PatternPart GroupEnd
+        {
+            get
+            {
+                return _parentEndPatternPart;
+            }
+        }
+
     }
 }

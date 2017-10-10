@@ -12,17 +12,17 @@ namespace RecursiveGrammarGraph
         private Dictionary<string, RGGNode> _rGGNodes;
         private Dictionary<string, RGGNode> _patternStartRGGNodes;
         private string _grammarName;
-        private Dictionary<string, Pattern> _buildPatternStart;
+        private Dictionary<string, PatternBuilder> _buildPatternStart;
 
         public RGG(string grammarName, int stopBuildAtStep)
         {
             _rGGNodes = new Dictionary<string, RGGNode>();
             _patternStartRGGNodes = new Dictionary<string, RGGNode>();
             _grammarName = grammarName;
-            _buildPatternStart = new Dictionary<string, Pattern>();
+            _buildPatternStart = new Dictionary<string, PatternBuilder>();
         }
 
-        private Dictionary<string, Pattern> BuildPatternStart
+        private Dictionary<string, PatternBuilder> BuildPatternStart
         {
             get
             {
@@ -33,10 +33,10 @@ namespace RecursiveGrammarGraph
         public PatternPart BuildPattern(string patternName)
         {
             //Lookup Pattern and if not existing create one
-            Pattern patternStart;
+            PatternBuilder patternStart;
             if(!BuildPatternStart.TryGetValue(patternName, out patternStart))
             {
-                patternStart = new Pattern(this, patternName);
+                patternStart = new PatternBuilder(this, patternName);
                 BuildPatternStart.Add(patternStart.Name, patternStart);
             }
             return patternStart.StartPattern();
@@ -44,7 +44,7 @@ namespace RecursiveGrammarGraph
 
         public void BuildGraph()
         {
-            foreach(Pattern pattern in BuildPatternStart.Values)
+            foreach(PatternBuilder pattern in BuildPatternStart.Values)
             {
                 pattern.Build();
             }

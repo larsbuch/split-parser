@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace RecursiveGrammarGraph
 {
-    public class Pattern
+    public class PatternBuilder
     {
         private string _patternName;
         private RGG _rGG;
         private List<PatternPart> _startPatternParts;
         private int _nodeCounter = 1;
 
-        internal Pattern(RGG rGG, string patternName)
+        internal PatternBuilder(RGG rGG, string patternName)
         {
             _rGG = rGG;
             _patternName = patternName;

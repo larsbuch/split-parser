@@ -16,7 +16,9 @@ namespace RecursiveGrammarGraph
         Lookup,
         Terminal,
         NonTerminalNonRecursive,
-        NonTerminalRecursive
+        NonTerminalRecursive,
+        GroupStart,
+        GroupEnd
     }
 
     internal enum PartType
@@ -24,7 +26,9 @@ namespace RecursiveGrammarGraph
         PatternStart,
         NonTerminal,
         PatternEnd,
-        Terminal
+        Terminal,
+        GroupStart,
+        GroupEnd
     }
 
 }
