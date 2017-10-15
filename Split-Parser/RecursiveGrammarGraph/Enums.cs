@@ -28,7 +28,9 @@ namespace RecursiveGrammarGraph
         PatternEnd,
         Terminal,
         GroupStart,
-        GroupEnd
+        GroupEnd,
+        RepeatNext,
+        RepeatPrevious
     }
 
 }

@@ -36,7 +36,7 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        public PatternPart StartPattern()
+        public IStartPatternPart StartPattern()
         {
             PatternPart patternPart = new PatternPart(_rGG, this, PartType.PatternStart);
             _startPatternParts.Add(patternPart);

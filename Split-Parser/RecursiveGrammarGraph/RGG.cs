@@ -14,7 +14,7 @@ namespace RecursiveGrammarGraph
         private string _grammarName;
         private Dictionary<string, PatternBuilder> _buildPatternStart;
 
-        public RGG(string grammarName, int stopBuildAtStep)
+        public RGG(string grammarName)
         {
             _rGGNodes = new Dictionary<string, RGGNode>();
             _patternStartRGGNodes = new Dictionary<string, RGGNode>();
@@ -42,11 +42,27 @@ namespace RecursiveGrammarGraph
             return patternStart.StartPattern();
         }
 
-        public void BuildGraph()
+        public void BuildGraph(int stopBuildAtStep)
         {
             foreach(PatternBuilder pattern in BuildPatternStart.Values)
             {
                 pattern.Build();
+            }
+            if (stopBuildAtStep > 1)
+            {
+                BuildStepTwo();
+            }
+            if (stopBuildAtStep > 2)
+            {
+                BuildStepThree();
+            }
+            if (stopBuildAtStep > 3)
+            {
+                BuildStepFour();
+            }
+            if (stopBuildAtStep > 4)
+            {
+                BuildStepFive();
             }
         }
 
@@ -62,7 +78,6 @@ namespace RecursiveGrammarGraph
                     }
                 }
             }
-            PrintRGG("Step 2", "Start");
         }
 
         private void BuildStepThree()

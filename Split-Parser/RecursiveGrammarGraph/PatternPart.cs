@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RecursiveGrammarGraph
 {
-    public class PatternPart
+    public class PatternPart:IPatternPart
     {
         private PatternBuilder _pattern;
         private PartType _partType;
@@ -15,6 +15,9 @@ namespace RecursiveGrammarGraph
         private PatternPart _parentPatternPart;
         private PatternPart _parentEndPatternPart;
         private string _toNodeName;
+        private int _minRepeats = 1;
+        private int? _maxRepeats = 1;
+
 
         internal PatternPart(RGG rGG, PatternBuilder pattern, PartType partType)
         {
@@ -43,7 +46,7 @@ namespace RecursiveGrammarGraph
 
         internal string TerminalPattern { get; set; }
 
-        public PatternPart NonTerminal(string nonterminalName)
+        public IPatternPart NonTerminal(string nonterminalName)
         {
             PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.NonTerminal);
             _nextPatternPart = patternPart;
@@ -92,7 +95,7 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        public PatternPart Terminal(string terminalPattern)
+        public IPatternPart Terminal(string terminalPattern)
         {
             PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.Terminal);
             _nextPatternPart = patternPart;
@@ -100,7 +103,7 @@ namespace RecursiveGrammarGraph
             return patternPart;
         }
 
-        public PatternPart Or
+        public IStartPatternPart Or
         {
             get
             {
@@ -117,7 +120,7 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        public PatternPart GroupStart
+        public IStartPatternPart GroupStart
         {
             get
             {
@@ -130,14 +133,14 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        public PatternPart NamedGroupStart(string groupName)
+        public IStartPatternPart NamedGroupStart(string groupName)
         {
-            PatternPart patternPart = GroupStart;
+            PatternPart patternPart = GroupStart as PatternPart;
             patternPart.Name = groupName;
             return patternPart;
         }
 
-        public PatternPart GroupEnd
+        public IPatternPart GroupEnd
         {
             get
             {
@@ -145,5 +148,94 @@ namespace RecursiveGrammarGraph
             }
         }
 
+        public IPatternPart TerminalEmpty
+        {
+            get
+            {
+                PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.Terminal);
+                _nextPatternPart = patternPart;
+                patternPart.TerminalPattern = string.Empty;
+                return patternPart;
+            }
+        }
+
+        #region Repetition
+
+        public IStartPatternPart OptionalNext
+        {
+            get
+            {
+                return RepeatNext(0, 1);
+            }
+        }
+
+        public IStartPatternPart RepeatNextZeroOrMore
+        {
+            get
+            {
+                return RepeatNext(0, null);
+            }
+        }
+
+        public IStartPatternPart RepeatNextOnceOrMore
+        {
+            get
+            {
+                return RepeatNext(1, null);
+            }
+        }
+
+        public IStartPatternPart RepeatNext(int repeats)
+        {
+            return RepeatNext(repeats, repeats);
+        }
+
+        public IStartPatternPart RepeatNext(int minRepeats, int? maxRepeats)
+        {
+            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.RepeatNext);
+            _nextPatternPart = patternPart;
+            _minRepeats = minRepeats;
+            _maxRepeats = maxRepeats;
+            return patternPart;
+        }
+        public IPatternPart OptionalPrevious
+        {
+            get
+            {
+                return RepeatPrevious(0, 1);
+            }
+        }
+
+        public IPatternPart RepeatPreviousZeroOrMore
+        {
+            get
+            {
+                return RepeatPrevious(0, null);
+            }
+        }
+
+        public IPatternPart RepeatPreviousOnceOrMore
+        {
+            get
+            {
+                return RepeatPrevious(1, null);
+            }
+        }
+
+        public IPatternPart RepeatPrevious(int repeats)
+        {
+            return RepeatPrevious(repeats, repeats);
+        }
+
+        public IPatternPart RepeatPrevious(int minRepeats, int? maxRepeats)
+        {
+            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.RepeatPrevious);
+            _nextPatternPart = patternPart;
+            _minRepeats = minRepeats;
+            _maxRepeats = maxRepeats;
+            return patternPart;
+        }
+
+        #endregion
     }
 }

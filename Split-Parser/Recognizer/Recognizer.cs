@@ -11,9 +11,9 @@ namespace Recognizer
     {
         private RGG _RecursiveGrammarGraph;
 
-        public Recognizer()
+        public Recognizer(RGG rGG)
         {
-            _RecursiveGrammarGraph = new RGG("A calculus", 5);
+            _RecursiveGrammarGraph = rGG;
         }
 
         private RGG RecursiveGrammarGraph
