@@ -427,8 +427,8 @@ namespace SplitParser_Console
             RGG grammar = new RGG("grammar");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("R1").NonTerminal("S").Or.NonTerminal("R2").NonTerminal("S").Or.TerminalEmpty.PatternEnd();
-            grammar.BuildPattern("R1").Terminal("x").NonTerminal("R1").Terminal("d").RepeatNext(i).Terminal("c").PatternEnd();// Repeat Terminal("c") i times
-            grammar.BuildPattern("Y").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(i).PatternEnd();// Repeat Terminal("c") i times
+            grammar.BuildPattern("R1").Terminal("x").NonTerminal("R1").Terminal("d").RepeatNext(i).Terminal("c").PatternEnd();
+            grammar.BuildPattern("Y").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(i).PatternEnd();
             grammar.BuildGraph(stopAtStep);
             grammar.PrintRGG(string.Format("Step {0}", stopAtStep), "Start");
             // Test input: Match original paper

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
+    <Compile Include="IPatternPart.cs" />
     <Compile Include="PatternPart.cs" />
     <Compile Include="PatternBuilder.cs" />
     <Compile Include="RGG.cs" />
