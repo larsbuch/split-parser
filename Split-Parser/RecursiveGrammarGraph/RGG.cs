@@ -30,7 +30,7 @@ namespace RecursiveGrammarGraph
             }
         }
 
-        public PatternPart BuildPattern(string patternName)
+        public IStartPatternPart BuildPattern(string patternName)
         {
             //Lookup Pattern and if not existing create one
             PatternBuilder patternStart;
@@ -149,6 +149,18 @@ namespace RecursiveGrammarGraph
         public void PrintRGG(string caption, string startNodeName)
         {
             string fileName = _grammarName + " - " + caption + ".dot";
+            foreach(char fileNameChar in fileName.ToCharArray())
+            {
+                if (Path.GetInvalidFileNameChars().Contains(fileNameChar))
+                {
+                    throw new Exception(string.Format("Filename contains invalid filename characters {0}: {1}", fileNameChar, fileName));
+                }
+                if (Path.GetInvalidPathChars().Contains(fileNameChar))
+                {
+                    throw new Exception(string.Format("Filename contains invalid path characters {0}: {1}", fileNameChar, fileName));
+                }
+            }
+
             StringBuilder startBuilder = new StringBuilder();
             startBuilder.AppendFormat("digraph {0}", addQuotationMarks(_grammarName) + " {");
             startBuilder.AppendLine();
@@ -204,9 +216,9 @@ namespace RecursiveGrammarGraph
             File.WriteAllText(fileName, startBuilder.ToString() + transitionBuilder.ToString());
         }
 
-        private string addQuotationMarks(char character)
+        private string addQuotationMarks(TerminalPattern characters)
         {
-            return addQuotationMarks(string.Format("{0}", character));
+            return addQuotationMarks(string.Format("{0}", characters.ToString()));
         }
 
         private string addQuotationMarks(string nodeName)

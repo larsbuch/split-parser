@@ -8,7 +8,7 @@ namespace RecursiveGrammarGraph
 {
     public class RGGTransition
     {
-        private char _terminal;
+        private TerminalPattern _terminalPattern;
         private string _nonTerminal;
         private List<string> _pushList;
         private List<string> _popList;
@@ -17,13 +17,13 @@ namespace RecursiveGrammarGraph
         public RGGNode To { get; private set; }
         public TransitionType TransitionType { get; private set; }
 
-        public char Terminal
+        public TerminalPattern Terminal
         {
             get
             {
                 if (TransitionType == TransitionType.Push || TransitionType == TransitionType.Terminal)
                 {
-                    return _terminal;
+                    return _terminalPattern;
                 }
                 else
                 {
@@ -34,7 +34,7 @@ namespace RecursiveGrammarGraph
             {
                 if (TransitionType == TransitionType.Push || TransitionType == TransitionType.Terminal)
                 {
-                    _terminal = value;
+                    _terminalPattern = value;
                 }
                 else
                 {
@@ -144,13 +144,13 @@ namespace RecursiveGrammarGraph
                     }
                     break;
                 case TransitionType.Terminal:
-                    if (args.Count() > 0 && args[0] is char)
+                    if (args.Count() > 0 && args[0] is TerminalPattern)
                     {
-                        Terminal = (char) args[0];
+                        Terminal = args[0] as TerminalPattern;
                     }
                     else
                     {
-                        throw new Exception("NonTerminalNonRecursive/NonTerminalRecursive expect args of one string");
+                        throw new Exception("Terminal expect args of one TerminalPattern");
                     }
                     break;
                 case TransitionType.Pop:
@@ -172,9 +172,9 @@ namespace RecursiveGrammarGraph
                 case TransitionType.Push:
                     if (args.Count() > 0)
                     {
-                        if (args[0] is char)
+                        if (args[0] is TerminalPattern)
                         {
-                            Terminal = (char)args[0];
+                            Terminal = args[0] as TerminalPattern;
                         }
                         else
                         {

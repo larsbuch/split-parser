@@ -8,13 +8,13 @@ namespace RecursiveGrammarGraph
 {
     public class RGGNode
     {
-        private Dictionary<char, RGGTransition> _pushTransitions;
+        private Dictionary<string, RGGTransition> _pushTransitions;
         private Dictionary<string, RGGTransition> _popTransitions;
         private List<RGGTransition> _otherTransitions;
 
         public RGGNode(string name)
         {
-            _pushTransitions = new Dictionary<char, RGGTransition>();
+            _pushTransitions = new Dictionary<string, RGGTransition>();
             _popTransitions = new Dictionary<string, RGGTransition>();
             _otherTransitions = new List<RGGTransition>();
             Name = name;
@@ -53,15 +53,15 @@ namespace RecursiveGrammarGraph
                     _popTransitions.Add(transition.To.Name, transition);
                     break;
                 case TransitionType.Push:
-                    _pushTransitions.Add(transition.Terminal, transition);
+                    _pushTransitions.Add(transition.Terminal.ToString(), transition);
                     break;
             }
         }
 
-        public bool PushTransition(char inputChar, out RGGTransition transition)
+        public bool PushTransition(TerminalPattern inputChar, out RGGTransition transition)
         {
             RGGTransition tempTransition;
-            if (_pushTransitions.TryGetValue(inputChar, out tempTransition))
+            if (_pushTransitions.TryGetValue(inputChar.ToString(), out tempTransition))
             {
                 transition = tempTransition;
                 return true;

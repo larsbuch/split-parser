@@ -8,114 +8,122 @@ namespace RecursiveGrammarGraph
 {
     public class PatternPart:IPatternPart
     {
-        private PatternBuilder _pattern;
-        private PartType _partType;
-        private RGG _rGG;
-        private PatternPart _nextPatternPart;
-        private PatternPart _parentPatternPart;
-        private PatternPart _parentEndPatternPart;
-        private string _toNodeName;
-        private int _minRepeats = 1;
-        private int? _maxRepeats = 1;
-
 
         internal PatternPart(RGG rGG, PatternBuilder pattern, PartType partType)
         {
-            _rGG = rGG;
-            _pattern = pattern;
-            _partType = partType;
+            RGG = rGG;
+            Pattern = pattern;
+            PartType = partType;
             if (partType == PartType.PatternEnd)
             {
-                _toNodeName = pattern.Name + " End";
+                ToNodeName = pattern.Name + " End";
             }
             else
             {
-                _toNodeName = pattern.NextNodeName;
-            }
-        }
-
-        internal string ToNodeName
-        {
-            get
-            {
-                return _toNodeName;
+                ToNodeName = pattern.NextNodeName;
             }
         }
 
         internal string Name { get; set; }
 
-        internal string TerminalPattern { get; set; }
+        internal TerminalPattern TerminalPattern { get; set; }
+
+        internal PatternPart ParentPatternPart { get; set; }
+
+        internal PatternPart ParentEndPatternPart { get; set; }
+
+        internal PatternPart EndPatternPart { get; set; }
+
+        internal string ToNodeName { get; private set; }
+
+        internal int MinRepeats { get; set; }
+
+        internal int? MaxRepeats { get; set; }
+
+        private PatternPart NextPatternPart { get; set; }
+
+        private PatternBuilder Pattern { get; set; }
+
+        private RGG RGG { get; set; }
+
+        private PartType PartType { get; set; }
 
         public IPatternPart NonTerminal(string nonterminalName)
         {
-            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.NonTerminal);
-            _nextPatternPart = patternPart;
+            PatternPart patternPart = NewPatternPart(PartType.NonTerminal);
             patternPart.Name = nonterminalName;
             return patternPart;
         }
 
         public void PatternEnd()
         {
-            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.PatternEnd);
-            _nextPatternPart = patternPart;
+            NewPatternPart(PartType.PatternEnd);
         }
 
         internal void Build(string fromNode)
         {
-            switch (_partType)
+            switch (PartType)
             {
                 case PartType.PatternStart:
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.PatternStart);
-                    _nextPatternPart.Build(ToNodeName);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.PatternStart);
+                    NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.GroupStart:
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart);
-                    _nextPatternPart.Build(ToNodeName);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart);
+                    NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.GroupEnd:
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupEnd);
-                    _nextPatternPart.Build(ToNodeName);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupEnd);
+                    NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.Terminal:
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.Terminal, TerminalPattern[0]);
-                    _nextPatternPart.Build(ToNodeName);
+                    if (TerminalPattern == null)
+                    {
+                        TerminalPattern = new TerminalPattern(string.Empty);
+                    }
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.Terminal, TerminalPattern);
+                    NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.NonTerminal:
                     TransitionType transitionType = TransitionType.NonTerminalNonRecursive;
-                    if (Name == _pattern.Name)
+                    if (Name == Pattern.Name)
                     {
                         transitionType = TransitionType.NonTerminalRecursive;
                     }
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, transitionType, Name);
-                    _nextPatternPart.Build(ToNodeName);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, transitionType, Name);
+                    NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.PatternEnd:
-                    _rGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.PatternEnd);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.PatternEnd);
                     break;
             }
         }
 
         public IPatternPart Terminal(string terminalPattern)
         {
-            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.Terminal);
-            _nextPatternPart = patternPart;
-            patternPart.TerminalPattern = terminalPattern;
+            PatternPart patternPart = NewPatternPart(PartType.Terminal);
+            patternPart.TerminalPattern = ConvertStringToPattern(terminalPattern);
             return patternPart;
+        }
+
+        private TerminalPattern ConvertStringToPattern(string terminalPattern)
+        {
+            return new TerminalPattern(terminalPattern);
         }
 
         public IStartPatternPart Or
         {
             get
             {
-                if (_parentPatternPart == null)
+                if (ParentPatternPart == null)
                 {
                     PatternEnd();
-                    return _pattern.StartPattern();
+                    return Pattern.StartPattern();
                 }
                 else
                 {
-                    _nextPatternPart = _parentEndPatternPart;
-                    return _parentPatternPart;
+                    NextPatternPart = ParentEndPatternPart;
+                    return ParentPatternPart;
                 }
             }
         }
@@ -124,12 +132,7 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.GroupStart);
-                PatternPart endPatternPart = new PatternPart(_rGG, _pattern, PartType.GroupEnd);
-                _nextPatternPart = patternPart;
-                _parentPatternPart = patternPart;
-                _parentEndPatternPart = endPatternPart;
-                return patternPart;
+                return NewPatternPart(PartType.GroupStart);
             }
         }
 
@@ -144,7 +147,15 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                return _parentEndPatternPart;
+                if (ParentEndPatternPart != null)
+                {
+                    NextPatternPart = ParentEndPatternPart;
+                    return ParentEndPatternPart;
+                }
+                else
+                {
+                    throw new Exception("GroupEnd without a group start");
+                }
             }
         }
 
@@ -152,10 +163,31 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.Terminal);
-                _nextPatternPart = patternPart;
-                patternPart.TerminalPattern = string.Empty;
+                PatternPart patternPart = NewPatternPart(PartType.Terminal);
+                patternPart.TerminalPattern = ConvertStringToPattern(string.Empty);
                 return patternPart;
+            }
+        }
+
+        private PatternPart NewPatternPart(PartType newPattrenPartType)
+        {
+            PatternPart patternPart = new PatternPart(RGG, Pattern, newPattrenPartType);
+            switch (PartType)
+            {
+                case PartType.PatternEnd:
+                    NextPatternPart = patternPart;
+                    return null;
+                case PartType.GroupStart:
+                    EndPatternPart = new PatternPart(RGG, Pattern, PartType.GroupEnd);
+                    NextPatternPart = patternPart;
+                    patternPart.ParentPatternPart = patternPart;
+                    patternPart.ParentEndPatternPart = EndPatternPart;
+                    return patternPart;
+                default:
+                    NextPatternPart = patternPart;
+                    patternPart.ParentPatternPart = ParentPatternPart;
+                    patternPart.ParentEndPatternPart = ParentEndPatternPart;
+                    return patternPart;
             }
         }
 
@@ -192,10 +224,9 @@ namespace RecursiveGrammarGraph
 
         public IStartPatternPart RepeatNext(int minRepeats, int? maxRepeats)
         {
-            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.RepeatNext);
-            _nextPatternPart = patternPart;
-            _minRepeats = minRepeats;
-            _maxRepeats = maxRepeats;
+            PatternPart patternPart = NewPatternPart(PartType.RepeatNext);
+            patternPart.MinRepeats = minRepeats;
+            patternPart.MaxRepeats = maxRepeats;
             return patternPart;
         }
         public IPatternPart OptionalPrevious
@@ -229,10 +260,9 @@ namespace RecursiveGrammarGraph
 
         public IPatternPart RepeatPrevious(int minRepeats, int? maxRepeats)
         {
-            PatternPart patternPart = new PatternPart(_rGG, _pattern, PartType.RepeatPrevious);
-            _nextPatternPart = patternPart;
-            _minRepeats = minRepeats;
-            _maxRepeats = maxRepeats;
+            PatternPart patternPart = NewPatternPart(PartType.RepeatPrevious);
+            patternPart.MinRepeats = minRepeats;
+            patternPart.MaxRepeats = maxRepeats;
             return patternPart;
         }
 

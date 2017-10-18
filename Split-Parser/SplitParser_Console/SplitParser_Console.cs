@@ -332,7 +332,7 @@ namespace SplitParser_Console
         private static void Grammar20(int stopAtStep)
         {
             /* An Improved Context-Free Recognizer */
-            RGG grammar = new RGG("Example ?");
+            RGG grammar = new RGG("Example 1");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("A").NonTerminal("S").Or.Terminal("a").Terminal("b").PatternEnd();
             grammar.BuildPattern("A").Terminal("a").NonTerminal("A").Or.Terminal("a").PatternEnd();
@@ -345,7 +345,7 @@ namespace SplitParser_Console
         private static void Grammar21(int stopAtStep)
         {
             /* An Improved Context-Free Recognizer */
-            RGG grammar = new RGG("Example ?");
+            RGG grammar = new RGG("Example 2");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("S").Terminal("a").Or.Terminal("a").PatternEnd();
             grammar.BuildGraph(stopAtStep);

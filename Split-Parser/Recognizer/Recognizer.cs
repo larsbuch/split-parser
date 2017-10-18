@@ -26,18 +26,22 @@ namespace Recognizer
 
         public bool Recognize(string inputToRecognizeOrReject)
         {
-            char[] input = inputToRecognizeOrReject.ToCharArray();
+            List<TerminalPattern> terminalPatterns = new List<TerminalPattern>();
+            foreach(char input in inputToRecognizeOrReject.ToCharArray())
+            {
+                terminalPatterns.Add(new TerminalPattern(input.ToString()));
+            }
             bool recognized = false;
             bool consumeCharacter = false;
             RGGNode currentNode = RecursiveGrammarGraph.GetNode("Start"); //To Recognition path: one for each pattern start from start
             RGGTransition tempTransition;
             Stack<RGGNode> nodeStack = new Stack<RGGNode>();//To Recognition path. Later replace with GSS
-            foreach (char inputChar in input)
+            foreach (TerminalPattern terminalPattern in terminalPatterns)
             {
                 consumeCharacter = false;
                 while (!consumeCharacter)
                 {
-                    if (currentNode.PushTransition(inputChar, out tempTransition))
+                    if (currentNode.PushTransition(terminalPattern, out tempTransition))
                     {
                         // TODO push to stack
                         currentNode = tempTransition.To;

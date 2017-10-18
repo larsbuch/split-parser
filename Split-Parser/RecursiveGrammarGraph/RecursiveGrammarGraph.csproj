@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums.cs" />
+    <Compile Include="TerminalChar.cs" />
+    <Compile Include="TerminalPattern.cs" />
     <Compile Include="IPatternPart.cs" />
     <Compile Include="PatternPart.cs" />
     <Compile Include="PatternBuilder.cs" />
