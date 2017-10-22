@@ -17,5 +17,16 @@ namespace RecursiveGrammarGraph
         public char CharInput { get; private set; }
         public bool IsCharGroup { get; private set; }
 
+        public override string ToString()
+        {
+            if(IsCharGroup)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                return CharInput.ToString();
+            }
+        }
     }
 }

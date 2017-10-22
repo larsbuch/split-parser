@@ -10,6 +10,7 @@ namespace RecursiveGrammarGraph
     {
         private TerminalPattern _terminalPattern;
         private string _nonTerminal;
+        private string _internal;
         private List<string> _pushList;
         private List<string> _popList;
 
@@ -65,6 +66,32 @@ namespace RecursiveGrammarGraph
                 else
                 {
                     throw new Exception(string.Format("Not expected transitiontype NonTerminal: {0}", TransitionType));
+                }
+            }
+        }
+
+        public string Internal
+        {
+            get
+            {
+                if (TransitionType == TransitionType.GroupStart)
+                {
+                    return _internal;
+                }
+                else
+                {
+                    throw new Exception(string.Format("Not expected transitiontype Internal: {0}", TransitionType));
+                }
+            }
+            private set
+            {
+                if (TransitionType == TransitionType.GroupStart)
+                {
+                    _internal = value;
+                }
+                else
+                {
+                    throw new Exception(string.Format("Not expected transitiontype Internal: {0}", TransitionType));
                 }
             }
         }
@@ -152,6 +179,18 @@ namespace RecursiveGrammarGraph
                     {
                         throw new Exception("Terminal expect args of one TerminalPattern");
                     }
+                    break;
+                case TransitionType.GroupStart:
+                    if (args.Count() > 0 && args[0] is string)
+                    {
+                        Internal = args[0] as string;
+                    }
+                    else
+                    {
+                        throw new Exception("Terminal expect args of one TerminalPattern");
+                    }
+                    break;
+                case TransitionType.GroupEnd:
                     break;
                 case TransitionType.Pop:
                     if (args.Count() > 0)

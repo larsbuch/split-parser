@@ -205,6 +205,10 @@ namespace RecursiveGrammarGraph
                             case TransitionType.Terminal:
                                 transitionBuilder.Append(addQuotationMarks(transition.Terminal));
                                 break;
+                            case TransitionType.GroupEnd:
+                            case TransitionType.GroupStart:
+                                transitionBuilder.Append(addQuotationMarks(transition.Internal));
+                                break;
                         }
                         transitionBuilder.AppendLine(" ];");
                     }

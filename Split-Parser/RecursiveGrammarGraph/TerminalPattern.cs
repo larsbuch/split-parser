@@ -35,7 +35,14 @@ namespace RecursiveGrammarGraph
 
         public override string ToString()
         {
-            return string.Join("", _inputChars.Select(s => s.ToString()));
+            if (_inputChars.Count > 0)
+            {
+                return string.Join("", _inputChars.Select(s => s.ToString()));
+            }
+            else
+            {
+                return Constants.Empty;
+            }
         }
     }
 }

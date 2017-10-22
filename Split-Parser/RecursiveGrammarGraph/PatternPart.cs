@@ -69,7 +69,7 @@ namespace RecursiveGrammarGraph
                     NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.GroupStart:
-                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart);
+                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart, Name);
                     NextPatternPart.Build(ToNodeName);
                     break;
                 case PartType.GroupEnd:
@@ -132,7 +132,9 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                return NewPatternPart(PartType.GroupStart);
+                PatternPart patternPart = NewPatternPart(PartType.GroupStart);
+                patternPart.Name = Constants.UnnamedGroupStart;
+                return patternPart;
             }
         }
 
