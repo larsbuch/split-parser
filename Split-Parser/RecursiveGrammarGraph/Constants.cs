@@ -10,5 +10,8 @@ namespace RecursiveGrammarGraph
     {
         public const string Empty = "Empty";
         public const string UnnamedGroupStart = "Group";
+        public const string EndPattern = "{0} End";
+        public const string GroupStartName = "{0} {1}";
+        public const string GroupEndName = "{0} {1}";
     }
 }

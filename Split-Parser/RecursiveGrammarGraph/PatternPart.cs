@@ -8,33 +8,184 @@ namespace RecursiveGrammarGraph
 {
     public class PatternPart:IPatternPart
     {
+        private PatternPart _parentStartPatternPart;
+        private PatternPart _parentEndPatternPart;
+        private PatternPart _groupStartPatternPart;
+        private PatternPart _groupEndPatternPart;
+        private List<PatternPart> _childPatternParts;
+        private string _toNodeName;
+        private string _childToNodeName;
+        private string _name;
 
         internal PatternPart(RGG rGG, PatternBuilder pattern, PartType partType)
         {
             RGG = rGG;
             Pattern = pattern;
             PartType = partType;
-            if (partType == PartType.PatternEnd)
+            _childPatternParts = new List<PatternPart>();
+        }
+
+        public List<PatternPart> ChildPatternParts
+        {
+            get
             {
-                ToNodeName = pattern.Name + " End";
-            }
-            else
-            {
-                ToNodeName = pattern.NextNodeName;
+                if (PartType != PartType.GroupStart)
+                {
+                    throw new Exception(string.Format("PartType {0} does not have children", PartType));
+                }
+                else
+                {
+                    return _childPatternParts;
+                }
             }
         }
 
-        internal string Name { get; set; }
+        internal string Name
+        {
+            get
+            {
+                switch (PartType)
+                {
+                    case PartType.GroupEnd:
+                        return string.Format(Constants.EndPattern, GroupStartPatternPart.Name);
+                    default:
+                        return _name;
+                }
+            }
+            set
+            {
+                _name = value;
+            }
+        }
 
         internal TerminalPattern TerminalPattern { get; set; }
 
-        internal PatternPart ParentPatternPart { get; set; }
+        internal PatternPart ParentStartPatternPart
+        {
+            get
+            {
+                return _parentStartPatternPart;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    if (value.PartType != PartType.GroupStart)
+                    {
+                        throw new Exception(string.Format("ParentStartPatternPart expected other type than {0}", value.PartType));
+                    }
+                    else
+                    {
+                        _parentStartPatternPart = value;
+                    }
+                }
+            }
+        }
 
-        internal PatternPart ParentEndPatternPart { get; set; }
+        internal PatternPart ParentEndPatternPart
+        {
+            get
+            {
+                return _parentEndPatternPart;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    if (value.PartType != PartType.GroupEnd)
+                    {
+                        throw new Exception(string.Format("ParentEndPatternPart expected other type than {0}", value.PartType));
+                    }
+                    else
+                    {
+                        _parentEndPatternPart = value;
+                    }
+                }
+            }
+        }
 
-        internal PatternPart EndPatternPart { get; set; }
+        internal PatternPart GroupStartPatternPart
+        {
+            get
+            {
+                return _groupStartPatternPart;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    if (value.PartType != PartType.GroupStart)
+                    {
+                        throw new Exception(string.Format("GroupStartPatternPart expected other type than {0}", value.PartType));
+                    }
+                    else
+                    {
+                        _groupStartPatternPart = value;
+                    }
+                }
+            }
+        }
 
-        internal string ToNodeName { get; private set; }
+        internal PatternPart GroupEndPatternPart
+        {
+            get
+            {
+                return _groupEndPatternPart;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    if (value.PartType != PartType.GroupEnd)
+                    {
+                        throw new Exception(string.Format("GroupEndPatternPart expected other type than {0}", value.PartType));
+                    }
+                    else
+                    {
+                        _groupEndPatternPart = value;
+                    }
+                }
+            }
+        }
+
+        internal string ToNodeName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_toNodeName))
+                {
+                    if (PartType == PartType.PatternEnd)
+                    {
+                        _toNodeName = string.Format(Constants.EndPattern, Pattern.Name);
+                    }
+                    else if (PartType == PartType.GroupStart)
+                    {
+                        _toNodeName = string.Format(Constants.GroupStartName, Pattern.NextNodeName, Name);
+                    }
+                    else if (NextPatternPart.PartType == PartType.GroupEnd)
+                    {
+                        _toNodeName = NextPatternPart.ChildToNodeName;
+                    }
+                    else
+                    {
+                        _toNodeName = Pattern.NextNodeName;
+                    }
+                }
+                return _toNodeName;
+            }
+        }
+
+        internal string ChildToNodeName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_childToNodeName))
+                {
+                    _childToNodeName =  string.Format(Constants.GroupEndName, Pattern.NextNodeName, Name);
+                }
+                return _childToNodeName;
+            }
+        }
 
         internal int MinRepeats { get; set; }
 
@@ -70,11 +221,17 @@ namespace RecursiveGrammarGraph
                     break;
                 case PartType.GroupStart:
                     RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupStart, Name);
-                    NextPatternPart.Build(ToNodeName);
+                    foreach (PatternPart childPatternPart in ChildPatternParts)
+                    {
+                        childPatternPart.Build(ToNodeName);
+                    }
                     break;
                 case PartType.GroupEnd:
-                    RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupEnd);
-                    NextPatternPart.Build(ToNodeName);
+                    if (RGG.GetNode(fromNode).TransitionCount == 0)
+                    {
+                        RGG.CreateRGGTransition(fromNode, ToNodeName, TransitionType.GroupEnd, Name);
+                        NextPatternPart.Build(ToNodeName);
+                    }
                     break;
                 case PartType.Terminal:
                     if (TerminalPattern == null)
@@ -115,7 +272,7 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                if (ParentPatternPart == null)
+                if (ParentStartPatternPart == null)
                 {
                     PatternEnd();
                     return Pattern.StartPattern();
@@ -123,7 +280,7 @@ namespace RecursiveGrammarGraph
                 else
                 {
                     NextPatternPart = ParentEndPatternPart;
-                    return ParentPatternPart;
+                    return ParentStartPatternPart;
                 }
             }
         }
@@ -180,14 +337,19 @@ namespace RecursiveGrammarGraph
                     NextPatternPart = patternPart;
                     return null;
                 case PartType.GroupStart:
-                    EndPatternPart = new PatternPart(RGG, Pattern, PartType.GroupEnd);
-                    NextPatternPart = patternPart;
-                    patternPart.ParentPatternPart = patternPart;
-                    patternPart.ParentEndPatternPart = EndPatternPart;
+                    if (GroupEndPatternPart == null)
+                    {
+                        GroupEndPatternPart = new PatternPart(RGG, Pattern, PartType.GroupEnd);
+                        GroupEndPatternPart.GroupStartPatternPart = this;
+                        NextPatternPart = GroupEndPatternPart;
+                    }
+                    patternPart.ParentStartPatternPart = this;
+                    patternPart.ParentEndPatternPart = GroupEndPatternPart;
+                    ChildPatternParts.Add(patternPart);
                     return patternPart;
                 default:
                     NextPatternPart = patternPart;
-                    patternPart.ParentPatternPart = ParentPatternPart;
+                    patternPart.ParentStartPatternPart = ParentStartPatternPart;
                     patternPart.ParentEndPatternPart = ParentEndPatternPart;
                     return patternPart;
             }

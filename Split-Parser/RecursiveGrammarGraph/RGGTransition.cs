@@ -15,7 +15,9 @@ namespace RecursiveGrammarGraph
         private List<string> _popList;
 
         public RGGNode From { get; private set; }
+
         public RGGNode To { get; private set; }
+
         public TransitionType TransitionType { get; private set; }
 
         public TerminalPattern Terminal
@@ -74,7 +76,7 @@ namespace RecursiveGrammarGraph
         {
             get
             {
-                if (TransitionType == TransitionType.GroupStart)
+                if (TransitionType == TransitionType.GroupStart || TransitionType == TransitionType.GroupEnd)
                 {
                     return _internal;
                 }
@@ -85,7 +87,7 @@ namespace RecursiveGrammarGraph
             }
             private set
             {
-                if (TransitionType == TransitionType.GroupStart)
+                if (TransitionType == TransitionType.GroupStart || TransitionType == TransitionType.GroupEnd)
                 {
                     _internal = value;
                 }
@@ -181,16 +183,24 @@ namespace RecursiveGrammarGraph
                     }
                     break;
                 case TransitionType.GroupStart:
-                    if (args.Count() > 0 && args[0] is string)
+                    if (args.Count() == 1 && args[0] is string)
                     {
                         Internal = args[0] as string;
                     }
                     else
                     {
-                        throw new Exception("Terminal expect args of one TerminalPattern");
+                        throw new Exception("GroupStart expect args of one string");
                     }
                     break;
                 case TransitionType.GroupEnd:
+                    if (args.Count() == 1 && args[0] is string)
+                    {
+                        Internal = args[0] as string;
+                    }
+                    else
+                    {
+                        throw new Exception("GroupEnd expect args of one string and one start Node name");
+                    }
                     break;
                 case TransitionType.Pop:
                     if (args.Count() > 0)

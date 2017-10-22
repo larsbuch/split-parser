@@ -25,7 +25,7 @@ namespace SplitParser_Console
                 //Grammar2(counter);
                 //Grammar3(counter);
                 //Grammar4(counter);
-                Grammar5(counter);
+                //Grammar5(counter);
                 //Grammar6(counter);
                 //Grammar7(counter);
                 //Grammar8(counter);
@@ -47,7 +47,7 @@ namespace SplitParser_Console
                 //Grammar24(counter);
                 //Grammar25(counter);
                 //Grammar26(counter);
-                //Grammar27(counter);
+                Grammar27(counter);
                 //Grammar28(counter);
                 counter += 1;
             }
@@ -424,11 +424,11 @@ namespace SplitParser_Console
         {
             /* Leo */
             int i = 5;
-            RGG grammar = new RGG("grammar");
+            RGG grammar = new RGG("Leo grammar");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("R1").NonTerminal("S").Or.NonTerminal("R2").NonTerminal("S").Or.TerminalEmpty.PatternEnd();
             grammar.BuildPattern("R1").Terminal("x").NonTerminal("R1").Terminal("d").RepeatNext(i).Terminal("c").PatternEnd();
-            grammar.BuildPattern("Y").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(i).PatternEnd();
+            grammar.BuildPattern("R2").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(i).PatternEnd();
             grammar.BuildGraph(stopAtStep);
             grammar.PrintRGG(string.Format("Step {0}", stopAtStep), "Start");
             // Test input: Match original paper
@@ -438,7 +438,7 @@ namespace SplitParser_Console
         private static void Grammar28(int stopAtStep)
         {
             /* Horspool/McLean */
-            RGG grammar = new RGG("grammar");
+            RGG grammar = new RGG("Horspool grammar");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("E").PatternEnd();
             grammar.BuildPattern("E").NonTerminal("E").Terminal("+").NonTerminal("E").Or.Terminal("n").PatternEnd();

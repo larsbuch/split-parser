@@ -45,15 +45,14 @@ namespace RecursiveGrammarGraph
         {
             switch (transition.TransitionType)
             {
-                case TransitionType.PatternStart:
-                case TransitionType.PatternEnd:
-                    _otherTransitions.Add(transition);
-                    break;
                 case TransitionType.Pop:
                     _popTransitions.Add(transition.To.Name, transition);
                     break;
                 case TransitionType.Push:
                     _pushTransitions.Add(transition.Terminal.ToString(), transition);
+                    break;
+                default:
+                    _otherTransitions.Add(transition);
                     break;
             }
         }

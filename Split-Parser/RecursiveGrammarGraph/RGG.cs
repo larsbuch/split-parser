@@ -162,9 +162,9 @@ namespace RecursiveGrammarGraph
             }
 
             StringBuilder startBuilder = new StringBuilder();
-            startBuilder.AppendFormat("digraph {0}", addQuotationMarks(_grammarName) + " {");
+            startBuilder.AppendFormat("digraph {0}", AddQuotationMarks(_grammarName) + " {");
             startBuilder.AppendLine();
-            startBuilder.AppendFormat("\t\tlabel = {0};", addQuotationMarks(_grammarName + " - " + caption));
+            startBuilder.AppendFormat("\t\tlabel = {0};", AddQuotationMarks(_grammarName + " - " + caption));
             startBuilder.AppendLine();
             startBuilder.AppendLine("\t\trankdir=LR;");
             startBuilder.AppendFormat("\t\tnode [ shape = doublecircle, color = blue ]; \"{0}\" \"{0} End\";", startNodeName);
@@ -179,35 +179,35 @@ namespace RecursiveGrammarGraph
                 {
                     foreach (RGGTransition transition in node.Transitions)
                     {
-                        transitionBuilder.AppendFormat("\t{0} -> {1} [ label = ", addQuotationMarks(transition.From.Name), addQuotationMarks(transition.To.Name));
+                        transitionBuilder.AppendFormat("\t{0} -> {1} [ label = ", AddQuotationMarks(transition.From.Name), AddQuotationMarks(transition.To.Name));
                         switch (transition.TransitionType)
                         {
                             case TransitionType.PatternStart:
-                                transitionBuilder.Append(addQuotationMarks("<Pattern Start>"));
+                                transitionBuilder.Append(AddQuotationMarks("<Pattern Start>"));
                                 transitionBuilder.Append(", color = blue");
                                 if (!transition.From.Name.Equals("Start"))
                                 {
-                                    patternNodes.Add(addQuotationMarks(transition.From.Name));
+                                    patternNodes.Add(AddQuotationMarks(transition.From.Name));
                                 }
                                 break;
                             case TransitionType.PatternEnd:
-                                transitionBuilder.Append(addQuotationMarks("<Pattern End>"));
+                                transitionBuilder.Append(AddQuotationMarks("<Pattern End>"));
                                 transitionBuilder.Append(", color = blue");
                                 if (!transition.To.Name.Equals("End"))
                                 {
-                                    patternNodes.Add(addQuotationMarks(transition.To.Name));
+                                    patternNodes.Add(AddQuotationMarks(transition.To.Name));
                                 }
                                 break;
                             case TransitionType.NonTerminalRecursive:
                             case TransitionType.NonTerminalNonRecursive:
-                                transitionBuilder.AppendFormat(addQuotationMarks("<{0}>"), transition.NonTerminal);
+                                transitionBuilder.AppendFormat(AddQuotationMarks("<{0}>"), transition.NonTerminal);
                                 break;
                             case TransitionType.Terminal:
-                                transitionBuilder.Append(addQuotationMarks(transition.Terminal));
+                                transitionBuilder.Append(AddQuotationMarks(transition.Terminal));
                                 break;
                             case TransitionType.GroupEnd:
                             case TransitionType.GroupStart:
-                                transitionBuilder.Append(addQuotationMarks(transition.Internal));
+                                transitionBuilder.Append(AddQuotationMarks(transition.Internal));
                                 break;
                         }
                         transitionBuilder.AppendLine(" ];");
@@ -220,12 +220,12 @@ namespace RecursiveGrammarGraph
             File.WriteAllText(fileName, startBuilder.ToString() + transitionBuilder.ToString());
         }
 
-        private string addQuotationMarks(TerminalPattern characters)
+        private string AddQuotationMarks(TerminalPattern characters)
         {
-            return addQuotationMarks(string.Format("{0}", characters.ToString()));
+            return AddQuotationMarks(string.Format("{0}", characters.ToString()));
         }
 
-        private string addQuotationMarks(string nodeName)
+        private string AddQuotationMarks(string nodeName)
         {
             return "\"" + nodeName + "\"";
         }
