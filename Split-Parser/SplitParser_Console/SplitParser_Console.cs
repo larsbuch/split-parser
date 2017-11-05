@@ -423,12 +423,12 @@ namespace SplitParser_Console
         private static void Grammar27(int stopAtStep)
         {
             /* Leo */
-            int i = 5;
+            int i = 3;
             RGG grammar = new RGG("Leo grammar");
             grammar.BuildPattern("Start").NonTerminal("S").PatternEnd();
             grammar.BuildPattern("S").NonTerminal("R1").NonTerminal("S").Or.NonTerminal("R2").NonTerminal("S").Or.TerminalEmpty.PatternEnd();
-            grammar.BuildPattern("R1").Terminal("x").NonTerminal("R1").Terminal("d").RepeatNext(i).Terminal("c").PatternEnd();
-            grammar.BuildPattern("R2").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(i).PatternEnd();
+            grammar.BuildPattern("R1").Terminal("x").NonTerminal("R1").Terminal("d").RepeatNext(0,i).Terminal("c").PatternEnd();
+            grammar.BuildPattern("R2").Terminal("y").NonTerminal("R2").Terminal("d").Terminal("c").RepeatPrevious(0,i).PatternEnd();
             grammar.BuildGraph(stopAtStep);
             grammar.PrintRGG(string.Format("Step {0}", stopAtStep), "Start");
             // Test input: Match original paper

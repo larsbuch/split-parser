@@ -108,21 +108,15 @@ namespace RecursiveGrammarGraph
         {
             get
             {
+                if(_groupStartPatternPart == null)
+                {
+                    _groupStartPatternPart = this;
+                }
                 return _groupStartPatternPart;
             }
             set
             {
-                if (value != null)
-                {
-                    if (value.PartType != PartType.GroupStart)
-                    {
-                        throw new Exception(string.Format("GroupStartPatternPart expected other type than {0}", value.PartType));
-                    }
-                    else
-                    {
-                        _groupStartPatternPart = value;
-                    }
-                }
+                _groupStartPatternPart = value;
             }
         }
 
@@ -130,21 +124,15 @@ namespace RecursiveGrammarGraph
         {
             get
             {
+                if (_groupEndPatternPart == null)
+                {
+                    _groupEndPatternPart = this;
+                }
                 return _groupEndPatternPart;
             }
             set
             {
-                if (value != null)
-                {
-                    if (value.PartType != PartType.GroupEnd)
-                    {
-                        throw new Exception(string.Format("GroupEndPatternPart expected other type than {0}", value.PartType));
-                    }
-                    else
-                    {
-                        _groupEndPatternPart = value;
-                    }
-                }
+                _groupEndPatternPart = value;
             }
         }
 
@@ -337,12 +325,10 @@ namespace RecursiveGrammarGraph
                     NextPatternPart = patternPart;
                     return null;
                 case PartType.GroupStart:
-                    if (GroupEndPatternPart == null)
-                    {
-                        GroupEndPatternPart = new PatternPart(RGG, Pattern, PartType.GroupEnd);
-                        GroupEndPatternPart.GroupStartPatternPart = this;
-                        NextPatternPart = GroupEndPatternPart;
-                    }
+                    GroupStartPatternPart = this;
+                    GroupEndPatternPart = new PatternPart(RGG, Pattern, PartType.GroupEnd);
+                    GroupEndPatternPart.GroupStartPatternPart = this;
+                    NextPatternPart = GroupEndPatternPart;
                     patternPart.ParentStartPatternPart = this;
                     patternPart.ParentEndPatternPart = GroupEndPatternPart;
                     ChildPatternParts.Add(patternPart);
@@ -424,10 +410,9 @@ namespace RecursiveGrammarGraph
 
         public IPatternPart RepeatPrevious(int minRepeats, int? maxRepeats)
         {
-            PatternPart patternPart = NewPatternPart(PartType.RepeatPrevious);
-            patternPart.MinRepeats = minRepeats;
-            patternPart.MaxRepeats = maxRepeats;
-            return patternPart;
+            GroupStartPatternPart.MinRepeats = minRepeats;
+            GroupStartPatternPart.MaxRepeats = maxRepeats;
+            return this;
         }
 
         #endregion

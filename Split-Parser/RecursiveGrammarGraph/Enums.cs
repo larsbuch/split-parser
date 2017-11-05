@@ -29,8 +29,7 @@ namespace RecursiveGrammarGraph
         Terminal,
         GroupStart,
         GroupEnd,
-        RepeatNext,
-        RepeatPrevious
+        RepeatNext
     }
 
 }

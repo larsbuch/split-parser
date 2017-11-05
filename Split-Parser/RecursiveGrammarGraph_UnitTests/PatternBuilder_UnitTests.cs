@@ -423,5 +423,265 @@ namespace RecursiveGrammarGraph_UnitTests
             Assert.Equal(0, candidateNode.TransitionCount);
         }
 
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatNext_Precise_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).RepeatNext(5).Terminal(terminalName).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatNext_Range_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).RepeatNext(2, 5).Terminal(terminalName).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatNext_Optional_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).OptionalNext.Terminal(terminalName).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatNext_GroupStart_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).RepeatNext(0,3).GroupStart.Terminal(terminalName).GroupEnd.PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // GroupStart
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.GroupStart, candidateTransition.TransitionType);
+            Assert.Equal(Constants.UnnamedGroupStart, candidateTransition.Internal);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // GroupEnd
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.GroupEnd, candidateTransition.TransitionType);
+            Assert.Equal(string.Format(Constants.EndPattern, Constants.UnnamedGroupStart), candidateTransition.Internal);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatPrevious_Precise_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).Terminal(terminalName).RepeatPrevious(5).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatPrevious_Range_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).Terminal(terminalName).RepeatPrevious(2, 5).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatPrevious_Optional_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).Terminal(terminalName).OptionalPrevious.PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
+        [Theory, RecursiveGrammarGraphTestConventions]
+        public void FullPattern_RepeatPrevious_GroupStart_Terminal(string grammarName, string patternName, string terminalName)
+        {
+            RGG rGG = new RGG(grammarName);
+            rGG.BuildPattern(patternName).GroupStart.Terminal(terminalName).GroupEnd.RepeatPrevious(0,3).PatternEnd();
+            rGG.BuildGraph(1);
+            RGGNode startPatternNode = rGG.GetPatternStart(patternName);
+            Assert.Equal(1, startPatternNode.TransitionCount);
+            // Pattern Start
+            RGGTransition candidateTransition = startPatternNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternStart, candidateTransition.TransitionType);
+            RGGNode candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // GroupStart
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.GroupStart, candidateTransition.TransitionType);
+            Assert.Equal(Constants.UnnamedGroupStart, candidateTransition.Internal);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Terminal
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.Terminal, candidateTransition.TransitionType);
+            Assert.Equal(terminalName, candidateTransition.Terminal.ToString());
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // GroupEnd
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.GroupEnd, candidateTransition.TransitionType);
+            Assert.Equal(string.Format(Constants.EndPattern, Constants.UnnamedGroupStart), candidateTransition.Internal);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(1, candidateNode.TransitionCount);
+            // Pattern End
+            candidateTransition = candidateNode.Transitions.First();
+            Assert.Equal(TransitionType.PatternEnd, candidateTransition.TransitionType);
+            candidateNode = candidateTransition.To;
+            Assert.True(candidateNode.Name.StartsWith(patternName));
+            Assert.Equal(0, candidateNode.TransitionCount);
+        }
+
     }
 }
